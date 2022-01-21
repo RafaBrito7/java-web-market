@@ -3,15 +3,19 @@ package com.devinhouse.market.model.transport;
 import java.math.BigDecimal;
 
 import com.devinhouse.market.model.persistence.Product;
+import com.fasterxml.jackson.annotation.JsonProperty;
 
 public class ProductDTO {
 
+	private String identifier;
+	
 	private String name;
 
 	private String description;
 
 	private BigDecimal price;
 
+	@JsonProperty("category")
 	private CategoryDTO categoryDTO;
 
 	public ProductDTO() {
@@ -30,6 +34,7 @@ public class ProductDTO {
 		this.description = product.getDescription();
 		this.price = product.getPrice();
 		this.categoryDTO = product.getCategory().generateTransportObject();
+		this.identifier = product.getIdentifier();
 	}
 
 	public String getName() {
@@ -64,4 +69,12 @@ public class ProductDTO {
 		this.categoryDTO = categoryDTO;
 	}
 
+	public String getIdentifier() {
+		return identifier;
+	}
+
+	public void setIdentifier(String identifier) {
+		this.identifier = identifier;
+	}
+	
 }

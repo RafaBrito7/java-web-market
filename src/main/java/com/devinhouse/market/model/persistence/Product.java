@@ -2,10 +2,12 @@ package com.devinhouse.market.model.persistence;
 
 import java.math.BigDecimal;
 
+import javax.persistence.CascadeType;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 
 import com.devinhouse.market.model.transport.ProductDTO;
@@ -16,6 +18,8 @@ public class Product {
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	private Long id;
+	
+	private String identifier;
 
 	private String name;
 
@@ -23,7 +27,8 @@ public class Product {
 
 	private BigDecimal price;
 
-	@ManyToOne
+	@ManyToOne(cascade = CascadeType.ALL)
+	@JoinColumn(name = "category_id")
 	private Category category;
 
 	public Product() {
@@ -42,10 +47,15 @@ public class Product {
 		this.description = productDTO.getDescription();
 		this.price = productDTO.getPrice();
 		this.category = productDTO.getCategoryDTO().generatePersistence();
+		this.identifier = productDTO.getIdentifier();
 	}
 
 	public Long getId() {
 		return id;
+	}
+	
+	public void setId(Long id) {
+		this.id = id;
 	}
 
 	public String getName() {
@@ -78,6 +88,14 @@ public class Product {
 
 	public void setCategory(Category category) {
 		this.category = category;
+	}
+
+	public String getIdentifier() {
+		return identifier;
+	}
+
+	public void setIdentifier(String identifier) {
+		this.identifier = identifier;
 	}
 
 }
