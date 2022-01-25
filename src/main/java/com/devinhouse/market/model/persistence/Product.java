@@ -3,6 +3,7 @@ package com.devinhouse.market.model.persistence;
 import java.math.BigDecimal;
 
 import javax.persistence.CascadeType;
+import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
@@ -21,6 +22,7 @@ public class Product {
 	
 	private String identifier;
 
+	@Column(unique = true, nullable = false)
 	private String name;
 
 	private String description;
@@ -46,7 +48,6 @@ public class Product {
 		this.name = productDTO.getName();
 		this.description = productDTO.getDescription();
 		this.price = productDTO.getPrice();
-		this.category = productDTO.getCategoryDTO().generatePersistence();
 		this.identifier = productDTO.getIdentifier();
 	}
 

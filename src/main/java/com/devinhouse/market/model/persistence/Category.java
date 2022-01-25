@@ -1,5 +1,6 @@
 package com.devinhouse.market.model.persistence;
 
+import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
@@ -14,14 +15,18 @@ public class Category {
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	private Long id;
 
+	@Column(unique = true, nullable = false)
 	private String name;
-	
+
+	private String identifier;
+
 	public Category() {
 		// TODO Auto-generated constructor stub
 	}
 
-	public Category(String name) {
+	public Category(String name, String identifier) {
 		this.name = name;
+		this.identifier = identifier;
 	}
 
 	public Long getId() {
@@ -36,8 +41,16 @@ public class Category {
 		this.name = name;
 	}
 
+	public String getIdentifier() {
+		return identifier;
+	}
+
+	public void setIdentifier(String identifier) {
+		this.identifier = identifier;
+	}
+
 	public CategoryDTO generateTransportObject() {
-		return new CategoryDTO(this.name);
+		return new CategoryDTO(this.name, this.identifier);
 	}
 
 }
