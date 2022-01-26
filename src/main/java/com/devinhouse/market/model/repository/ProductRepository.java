@@ -13,4 +13,7 @@ public interface ProductRepository extends CrudRepository<Product, Long>{
 	
 	@Query(value = "DELETE FROM product where identifier = :identifier" , nativeQuery = true)
 	public void deleteByIdentifier(String identifier);
+	
+	@Query
+	public Product findByName(String name);
 }

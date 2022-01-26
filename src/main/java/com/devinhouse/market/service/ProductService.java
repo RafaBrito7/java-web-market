@@ -117,4 +117,8 @@ public class ProductService {
 		this.LOG.info("Produto " + product.getName() + " encontrado no Banco!");
 		return new ProductDTO(product);
 	}
+	
+	public Product getByName(String name) {
+		return this.productRepository.findByName(name);
+	}
 }

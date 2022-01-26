@@ -5,6 +5,7 @@ import org.apache.logging.log4j.Logger;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import com.devinhouse.market.model.persistence.Customer;
 import com.devinhouse.market.model.repository.CustomerRepository;
@@ -43,14 +44,38 @@ public class CustomerService {
 
 	private void checkIfDTOIsNull(CustomerDTO customerDTO) throws Exception {
 		if (customerDTO == null) {
-			throw new Exception("O Parâmetro está nulo!");
+			throw new Exception("O Cliente está nulo!");
+		}
+	}
+	
+	private void checkIfIdIsNull(String identifier) throws Exception {
+		if (identifier == null || identifier.isEmpty()) {
+			throw new Exception("O Identificador está nulo!");
 		}
 	}
 
+	@Transactional
 	public ResponseEntity<HttpStatus> update(CustomerDTO customerDTO, String identifier) {
-		// TODO Auto-generated method stub
-		return null;
+		try {
+			checkIfDTOIsNull(customerDTO);
+			checkIfIdIsNull(identifier);
+		} catch (Exception e) {
+			this.LOG.error("Erro ao atualizar Cliente: " + e.getMessage());
+			e.printStackTrace();
+			return ResponseEntity.badRequest().build();
+		}
+		
+		Customer customer = this.customerRepository.findByIdentifier(identifier);
+		customer.setBirthdate(customerDTO.getBirthdate());
+		customer.setCpf(customerDTO.getCpf());
+		customer.setEmail(customerDTO.getEmail());
+		customer.setName(customerDTO.getName());
+		customer.setPhoneNumber(customerDTO.getPhoneNumber());
+		
+		return ResponseEntity.ok().build();
 	}
 	
-	
+	public Customer findByIdentifier(String identifier) {
+		return this.customerRepository.findByIdentifier(identifier);
+	}
 }

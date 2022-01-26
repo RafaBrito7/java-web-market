@@ -1,6 +1,6 @@
 package com.devinhouse.market.model.persistence;
 
-import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.List;
 
 import javax.persistence.CascadeType;
@@ -13,6 +13,8 @@ import javax.persistence.JoinColumn;
 import javax.persistence.JoinTable;
 import javax.persistence.ManyToMany;
 
+import com.devinhouse.market.model.transport.PurchaseDTO;
+
 @Entity
 public class Purchase {
 
@@ -23,7 +25,7 @@ public class Purchase {
 	@Column(unique = true)
 	private String identifier;
 
-	private LocalDate purchasedDate;
+	private LocalDateTime purchasedDate;
 
 	@ManyToMany(cascade = CascadeType.ALL)
 	@JoinTable(name = "purchases_products", joinColumns = 
@@ -34,10 +36,15 @@ public class Purchase {
 	public Purchase() {
 	}
 
-	public Purchase(String identifier, LocalDate purchasedDate, List<Product> products) {
+	public Purchase(String identifier, List<Product> products) {
 		this.identifier = identifier;
-		this.purchasedDate = purchasedDate;
+		this.purchasedDate = LocalDateTime.now();
 		this.products = products;
+	}
+	
+	public Purchase(PurchaseDTO purchaseDTO) {
+		this.identifier = purchaseDTO.getIdentifier();
+		this.purchasedDate = LocalDateTime.now();
 	}
 
 	public Long getId() {
@@ -52,11 +59,11 @@ public class Purchase {
 		this.identifier = identifier;
 	}
 
-	public LocalDate getPurchasedDate() {
+	public LocalDateTime getPurchasedDate() {
 		return purchasedDate;
 	}
 
-	public void setPurchasedDate(LocalDate purchasedDate) {
+	public void setPurchasedDate(LocalDateTime purchasedDate) {
 		this.purchasedDate = purchasedDate;
 	}
 
@@ -73,5 +80,4 @@ public class Purchase {
 		return "Purchase [id=" + id + ", identifier=" + identifier + ", purchasedDate=" + purchasedDate + ", products="
 				+ products + "]";
 	}
-
 }
