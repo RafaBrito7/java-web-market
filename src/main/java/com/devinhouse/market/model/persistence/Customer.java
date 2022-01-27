@@ -32,6 +32,9 @@ public class Customer {
 	@Column(unique = true)
 	private String email;
 
+	@Column(nullable = false)
+	private String password;
+
 	private String phoneNumber;
 
 	private LocalDate birthdate;
@@ -54,13 +57,21 @@ public class Customer {
 		this.birthdate = birthdate;
 		this.purchase = purchase;
 	}
-	
+
 	public Customer(CustomerDTO customerDTO) {
 		this.name = customerDTO.getName();
 		this.cpf = customerDTO.getCpf();
 		this.email = customerDTO.getEmail();
 		this.phoneNumber = customerDTO.getPhoneNumber();
 		this.birthdate = customerDTO.getBirthdate();
+	}
+
+	public String getPassword() {
+		return password;
+	}
+
+	public void setPassword(String password) {
+		this.password = password;
 	}
 
 	public Long getId() {

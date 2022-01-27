@@ -4,16 +4,20 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.userdetails.UserDetails;
+import org.springframework.security.core.userdetails.UserDetailsService;
+import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import com.devinhouse.market.model.persistence.Customer;
 import com.devinhouse.market.model.repository.CustomerRepository;
 import com.devinhouse.market.model.transport.CustomerDTO;
+import com.devinhouse.market.model.transport.CustomerDetails;
 import com.devinhouse.market.utils.Utils;
 
 @Service
-public class CustomerService {
+public class CustomerService implements UserDetailsService {
 	
 	private final Logger LOG = LogManager.getLogger(CustomerService.class);
 	
@@ -77,5 +81,15 @@ public class CustomerService {
 	
 	public Customer findByIdentifier(String identifier) {
 		return this.customerRepository.findByIdentifier(identifier);
+	}
+	
+	public Customer findByEmail(String email) {
+		return this.customerRepository.findByEmail(email);
+	}
+
+	@Override
+	public UserDetails loadUserByUsername(String email) throws UsernameNotFoundException {
+		Customer customer = this.findByEmail(email);
+		return new CustomerDetails(customer);
 	}
 }

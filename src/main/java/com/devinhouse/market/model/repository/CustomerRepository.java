@@ -11,4 +11,6 @@ public interface CustomerRepository extends CrudRepository<Customer, Long>{
 
 	@Query
 	public Customer findByIdentifier(String identifier);
+	
+	public Customer findByEmail(String email);
 }
