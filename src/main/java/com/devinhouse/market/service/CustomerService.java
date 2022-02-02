@@ -7,6 +7,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -18,40 +19,41 @@ import com.devinhouse.market.utils.Utils;
 
 @Service
 public class CustomerService implements UserDetailsService {
-	
+
 	private final Logger LOG = LogManager.getLogger(CustomerService.class);
-	
-	private final CustomerRepository customerRepository;
-	
-	public CustomerService(CustomerRepository customerRepository) {
+
+	private MailService mailService;
+	private CustomerRepository customerRepository;
+	private PasswordEncoder encoder;
+
+	public CustomerService(CustomerRepository customerRepository, PasswordEncoder encoder, MailService mailService) {
 		this.customerRepository = customerRepository;
+		this.encoder = encoder;
+		this.mailService = mailService;
 	}
 
-	public ResponseEntity<HttpStatus> create(CustomerDTO customerDTO) {
+	// AQUI
+	public Customer create(CustomerDTO customerDTO) throws Exception {
 		this.LOG.info("Validando os Parâmetros da requisição");
-		try {
-			checkIfDTOIsNull(customerDTO);
-		} catch (Exception e) {
-			this.LOG.error("Erro ao salvar Cliente: " + e.getMessage());
-			e.printStackTrace();
-			return ResponseEntity.badRequest().build();
-		}
+		checkIfDTOIsNull(customerDTO);
 		this.LOG.info("Preparando para criar um novo Cliente");
-		
+
 		Customer customer = new Customer(customerDTO);
 		customer.setIdentifier(Utils.generateUUID());
+		customer.setPassword(encoder.encode(customerDTO.getPassword()));
 		this.customerRepository.save(customer);
-		
+
+		this.mailService.sendMail(customerDTO.getEmail(), "MSG");
 		this.LOG.info("Cliente criado!");
-		return ResponseEntity.accepted().build();
+		return customer;
 	}
 
 	private void checkIfDTOIsNull(CustomerDTO customerDTO) throws Exception {
 		if (customerDTO == null) {
-			throw new Exception("O Cliente está nulo!");
+			throw new IllegalArgumentException("O Cliente está nulo!");
 		}
 	}
-	
+
 	private void checkIfIdIsNull(String identifier) throws Exception {
 		if (identifier == null || identifier.isEmpty()) {
 			throw new Exception("O Identificador está nulo!");
@@ -68,21 +70,21 @@ public class CustomerService implements UserDetailsService {
 			e.printStackTrace();
 			return ResponseEntity.badRequest().build();
 		}
-		
+
 		Customer customer = this.customerRepository.findByIdentifier(identifier);
 		customer.setBirthdate(customerDTO.getBirthdate());
 		customer.setCpf(customerDTO.getCpf());
 		customer.setEmail(customerDTO.getEmail());
 		customer.setName(customerDTO.getName());
 		customer.setPhoneNumber(customerDTO.getPhoneNumber());
-		
+
 		return ResponseEntity.ok().build();
 	}
-	
+
 	public Customer findByIdentifier(String identifier) {
 		return this.customerRepository.findByIdentifier(identifier);
 	}
-	
+
 	public Customer findByEmail(String email) {
 		return this.customerRepository.findByEmail(email);
 	}

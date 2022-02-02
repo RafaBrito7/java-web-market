@@ -10,21 +10,26 @@ import org.springframework.security.config.annotation.web.configuration.EnableWe
 import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter;
 import org.springframework.security.crypto.password.PasswordEncoder;
 
+import com.devinhouse.market.filter.JwtAuthenticationFilter;
 import com.devinhouse.market.service.CustomerService;
+import com.devinhouse.market.utils.JwtUtil;
 
 @EnableWebSecurity
 public class SecurityConfig extends WebSecurityConfigurerAdapter {
 
+	private static final String[] PUBLIC_MATCH_POST = { "/login/**" };
+
 	private Environment environment;
 	private PasswordEncoder encoder;
 	private CustomerService customerService;
-	
-	private static final String[] PUBLIC_MATCH_POST = {"/login/**"};
+	private JwtUtil jwtUtil;
 
-	public SecurityConfig(CustomerService customerService, PasswordEncoder encoder,
-			Environment environment) {
+	public SecurityConfig(CustomerService customerService, PasswordEncoder encoder, Environment environment,
+			JwtUtil jwtUtil) {
 		this.customerService = customerService;
 		this.encoder = encoder;
+		this.environment = environment;
+		this.jwtUtil = jwtUtil;
 	}
 
 	@Override
@@ -35,7 +40,7 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
 	@Override
 	protected void configure(HttpSecurity http) throws Exception {
 		String[] profiles = this.environment.getActiveProfiles();
-		if(!Set.of(profiles).contains("prod")) {
+		if(profiles == null || !Set.of(profiles).contains("prod")) {
 			http.cors().disable();
 			http.csrf().disable();			
 		}
@@ -44,6 +49,7 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
 		.permitAll()
 		.anyRequest().authenticated();
 		
+		http.addFilter(new JwtAuthenticationFilter(authenticationManager(), jwtUtil));
 		
 	}
 

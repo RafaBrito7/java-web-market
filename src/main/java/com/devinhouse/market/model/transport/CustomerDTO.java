@@ -15,17 +15,23 @@ public class CustomerDTO {
 
 	private String email;
 
+	private String password;
+
 	private String phoneNumber;
+
+	private String v1;
 
 	private LocalDate birthdate;
 
 	private Purchase purchase;
 
+	private String v2;
+
 	public CustomerDTO() {
 	}
 
 	public CustomerDTO(String identifier, String name, String cpf, String email, String phoneNumber,
-			LocalDate birthdate, Purchase purchase) {
+			LocalDate birthdate, Purchase purchase, String password) {
 		this.identifier = identifier;
 		this.name = name;
 		this.cpf = cpf;
@@ -33,16 +39,31 @@ public class CustomerDTO {
 		this.phoneNumber = phoneNumber;
 		this.birthdate = birthdate;
 		this.purchase = purchase;
+		this.password = password;
+	}
+
+	public CustomerDTO(Customer customer) {
+		this(customer.getIdentifier(), customer.getName(), customer.getCpf(), customer.getEmail(),
+				customer.getPhoneNumber(), customer.getBirthdate(), customer.getPurchase(), customer.getPassword());
+	}
+
+	public CustomerDTO(Customer customer, String v1) {
+		this(customer);
+		this.v1 = v1;
 	}
 	
-	public CustomerDTO(Customer customer) {
-		this.identifier = customer.getIdentifier();
-		this.name = customer.getName();
-		this.cpf = customer.getCpf();
-		this.email = customer.getEmail();
-		this.phoneNumber = customer.getPhoneNumber();
-		this.birthdate = customer.getBirthdate();
-		this.purchase = customer.getPurchase();
+	public CustomerDTO(Customer customer, String v1, String v2) {
+		this(customer, v1);
+		this.v2 = v2;
+	}
+	
+	
+	public String getPassword() {
+		return password;
+	}
+
+	public void setPassword(String password) {
+		this.password = password;
 	}
 
 	public String getIdentifier() {
@@ -106,5 +127,5 @@ public class CustomerDTO {
 		return "CustomerDTO [identifier=" + identifier + ", name=" + name + ", cpf=" + cpf + ", email=" + email
 				+ ", phoneNumber=" + phoneNumber + ", birthdate=" + birthdate + ", purchase=" + purchase + "]";
 	}
-	
+
 }

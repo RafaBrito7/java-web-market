@@ -83,7 +83,7 @@ public class ProductService {
 	public List<ProductDTO> listAll(){
 		this.LOG.info("Buscando Produtos no Banco!");
 		List<ProductDTO> productsDTO = new ArrayList<>();
-		Iterable<Product> iterable = this.productRepository.findAll();
+		Iterable<Product> iterable = this.productRepository.findAll();;
 		iterable.forEach(p -> productsDTO.add(new ProductDTO(p)));
 		this.LOG.info("Encontrados " + productsDTO.size() + " produtos no banco.");
 		return productsDTO;
